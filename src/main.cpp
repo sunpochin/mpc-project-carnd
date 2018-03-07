@@ -106,9 +106,9 @@ int main() {
           Eigen::VectorXd state = Eigen::VectorXd(6);
           state << px, py, psi, v, cte, epsi;
 
-          auto answers = mpc.Solve(state, fit_curve_coeffs);
-          double steer_value = answers[0];
-          double throttle_value = answers[1];
+          auto solution = mpc.Solve(state, fit_curve_coeffs);
+          double steer_value = solution[0];
+          double throttle_value = solution[1];
 
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
@@ -122,6 +122,15 @@ int main() {
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Green line
+          // TODO
+          size_t size = solution.size();
+          for (size_t t = 0; t < size / 2; t++) {
+              mpc_x_vals.push_back(solution[t]);
+          }
+          for (size_t t = (size / 2) + 1; t < size; t++) {
+              mpc_y_vals.push_back(solution[t]);
+          }
+
 
           msgJson["mpc_x"] = mpc_x_vals;
           msgJson["mpc_y"] = mpc_y_vals;
@@ -132,7 +141,14 @@ int main() {
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
-          // https://discussions.udacity.com/t/no-trajectory-plotted-in-simulator/373986/3
+          // TODO
+
+          // The formula illustrated:
+          // Q:Do you need to transform coordiantes? https://discussions.udacity.com/t/do-you-need-to-transform-coordiantes/256483/10
+          // Related discussions:
+          // Q:Unable to understand transforms? https://discussions.udacity.com/t/unable-to-understand-transforms/271023/3
+          // https://discussions.udacity.com/t/no-trajectory-plotted-in-simulator/373986/7
+          // https://discussions.udacity.com/t/lines-not-displaying/395585
           auto vehicle_pts = Eigen::MatrixXd(2, ptsx.size());  
           for (size_t i = 0; i < ptsx.size() ; ++i) {
               vehicle_pts(0, i) = (ptsx[i] - px) * cos(psi) + (ptsy[i] - py) * sin(psi);
