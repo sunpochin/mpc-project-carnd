@@ -57,7 +57,6 @@ class FG_eval {
     // `fg` a vector of the cost constraints, `vars` is a vector of variable values (state & actuators)
     // NOTE: You'll probably go back and forth between this function and
     // the Solver function below.
-    cout << "vars: " << vars << std::endl;
 
     // codes from the quiz: https://github.com/udacity/CarND-MPC-Quizzes
     fg[0] = 0;
@@ -188,6 +187,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   vars[v_start] = v;
   vars[cte_start] = cte;
   vars[epsi_start] = epsi;
+  cout << "vars: " << vars << std::endl;
 
   Dvector vars_lowerbound(n_vars);
   Dvector vars_upperbound(n_vars);

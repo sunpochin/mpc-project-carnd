@@ -99,14 +99,14 @@ int main() {
           *
           */
           // https://discussions.udacity.com/t/trajectory-seems-off-during-curvy-waypoints/272947          
-          Eigen::VectorXd ptsxXd = Eigen::VectorXd(6);
-          Eigen::VectorXd ptsyXd = Eigen::VectorXd(6);
+          Eigen::VectorXd Eigenpts_X = Eigen::VectorXd(6);
+          Eigen::VectorXd Eigenpts_Y = Eigen::VectorXd(6);
           // should "transform points to car space" !!!
           for (size_t i = 0; i < ptsx.size(); i++) {
-            ptsxXd[i] = (ptsx[i] - px) * cos(psi) - (ptsy[i] - py) * sin(psi);
-            ptsxXd[i] = -(ptsx[i] - px) * sin(psi) + (ptsy[i] - py) * cos(psi);
+            Eigenpts_X[i] = (ptsx[i] - px) * cos(psi) + (ptsy[i] - py) * sin(psi);
+            Eigenpts_Y[i] = -(ptsx[i] - px) * sin(psi) + (ptsy[i] - py) * cos(psi);
           }
-          Eigen::VectorXd fit_curve_coeffs = polyfit(ptsxXd, ptsyXd, 3);
+          Eigen::VectorXd fit_curve_coeffs = polyfit(Eigenpts_X, Eigenpts_Y, 3);
           double cte = polyeval(fit_curve_coeffs, px);
           double epsi = -atan(fit_curve_coeffs[1]);
 
