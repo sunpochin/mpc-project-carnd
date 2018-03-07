@@ -103,17 +103,20 @@ int main() {
           Eigen::VectorXd fit_curve_coeffs = polyfit(ptsxXd, ptsyXd, 3);
           double cte = polyeval(fit_curve_coeffs, px) - py;
           double epsi = psi - atan(fit_curve_coeffs[1]);
-          Eigen::VectorXd state = Eigen::VectorXd(6);
-          state << px, py, psi, v, cte, epsi;
 
+          Eigen::VectorXd state = Eigen::VectorXd(6);
+          state << 0, 0, 0, v, cte, epsi;
           auto solution = mpc.Solve(state, fit_curve_coeffs);
-          double steer_value = solution[0];
-          double throttle_value = solution[1];
+
+          double steer_value;
+          double throttle_value;
+          steer_value = solution[0];
+          throttle_value = solution[1];
 
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
-          msgJson["steering_angle"] = steer_value;
+          msgJson["steering_angle"] = steer_value / (deg2rad(25) ) ;
           msgJson["throttle"] = throttle_value;
 
           //Display the MPC predicted trajectory 
@@ -123,14 +126,13 @@ int main() {
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Green line
           // TODO
-          size_t size = solution.size();
-          for (size_t t = 0; t < size / 2; t++) {
-              mpc_x_vals.push_back(solution[t]);
+          for (size_t i = 2; i < solution.size(); i++ ) {
+            if (i % 2 == 0) {
+              mpc_x_vals.push_back(solution[i]);
+            } else {
+              mpc_y_vals.push_back(solution[i]);
+            }
           }
-          for (size_t t = (size / 2) + 1; t < size; t++) {
-              mpc_y_vals.push_back(solution[t]);
-          }
-
 
           msgJson["mpc_x"] = mpc_x_vals;
           msgJson["mpc_y"] = mpc_y_vals;

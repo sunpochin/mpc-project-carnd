@@ -14,7 +14,7 @@ using CppAD::AD;
 
 // TODO: Set the timestep length and duration
 size_t N = 10;
-double dt = 1;
+double dt = 0.1;
 
 // https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/338b458f-7ebf-449c-9ad1-611eb933b076/concepts/ee21948d-7fad-4821-b61c-0d69bbfcc425
 // Defining the index used to form the array "vars"
@@ -64,21 +64,21 @@ class FG_eval {
 
     // The part of the cost based on the reference state.
     for (size_t t = 0; t < N; t++) {
-      fg[0] += CppAD::pow(vars[cte_start + t], 2);
-      fg[0] += CppAD::pow(vars[epsi_start + t], 2);
+      fg[0] += 1000 * CppAD::pow(vars[cte_start + t], 2);
+      fg[0] += 1000 * CppAD::pow(vars[epsi_start + t], 2);
       fg[0] += CppAD::pow(vars[v_start + t] - ref_v, 2);
     }
 
     // Minimize the use of actuators.
     for (size_t t = 0; t < N - 1; t++) {
-      fg[0] += CppAD::pow(vars[delta_start + t], 2);
-      fg[0] += CppAD::pow(vars[a_start + t], 2);
+      fg[0] += 10 * CppAD::pow(vars[delta_start + t], 2);
+      fg[0] += 10 * CppAD::pow(vars[a_start + t], 2);
     }
 
     // Minimize the value gap between sequential actuations.
     for (size_t t = 0; t < N - 2; t++) {
-      fg[0] += CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
-      fg[0] += CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
+      fg[0] += 100 * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
+      fg[0] += 100 * CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
     }
 
     // Initial constraints
@@ -115,8 +115,8 @@ class FG_eval {
       AD<double> delta0 = vars[delta_start + t - 1];
       AD<double> a0 = vars[a_start + t - 1];
 
-      AD<double> f0 = coeffs[0] + coeffs[1] * x0;
-      AD<double> psides0 = CppAD::atan(coeffs[1]);
+      AD<double> f0 = coeffs[0] + coeffs[1] * x0 + coeffs[2] * CppAD::pow(x0, 2) + coeffs[3] * CppAD::pow(x0, 3);
+      AD<double> psides0 = CppAD::atan(coeffs[1] + 2 * coeffs[2] * x0 + 3 * coeffs[3] * CppAD::pow(x0, 2));
 
       // Here's `x` to get you started.
       // The idea here is to constraint this value to be 0.
@@ -284,12 +284,12 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   vector<double> result;
   result.push_back(solution.x[delta_start]);
   result.push_back(solution.x[a_start]);
-  // for (size_t t = 0; t < N-1; i++) {
-  //   result.push_back(solution.x[delta_start + t + 1]);
-  // }
-  // for (size_t t = 0; t < N-1; i++) {
-  //   result.push_back(solution.x[a_start + t + 1]);
-  // }
+
+  for (size_t i = 0; i < N-1; i++) {
+    result.push_back(solution.x[x_start + i + 1]);
+    result.push_back(solution.x[y_start + i + 1]);
+  }
+
   return result;
 
 }
