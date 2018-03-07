@@ -98,11 +98,17 @@ int main() {
           * Both are in between [-1, 1].
           *
           */
-          Eigen::VectorXd ptsxXd = Eigen::VectorXd::Map(&ptsx[0], ptsx.size());
-          Eigen::VectorXd ptsyXd = Eigen::VectorXd::Map(&ptsy[0], ptsy.size());          
+          // https://discussions.udacity.com/t/trajectory-seems-off-during-curvy-waypoints/272947          
+          Eigen::VectorXd ptsxXd = Eigen::VectorXd(6);
+          Eigen::VectorXd ptsyXd = Eigen::VectorXd(6);
+          // should "transform points to car space" !!!
+          for (size_t i = 0; i < ptsx.size(); i++) {
+            ptsxXd[i] = (ptsx[i] - px) * cos(psi) - (ptsy[i] - py) * sin(psi);
+            ptsxXd[i] = (ptsx[i] - px) * sin(psi) + (ptsy[i] - py) * cos(psi);
+          }
           Eigen::VectorXd fit_curve_coeffs = polyfit(ptsxXd, ptsyXd, 3);
-          double cte = polyeval(fit_curve_coeffs, px) - py;
-          double epsi = psi - atan(fit_curve_coeffs[1]);
+          double cte = polyeval(fit_curve_coeffs, px);
+          double epsi = -atan(fit_curve_coeffs[1]);
 
           Eigen::VectorXd state = Eigen::VectorXd(6);
           state << 0, 0, 0, v, cte, epsi;
