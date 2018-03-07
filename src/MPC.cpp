@@ -33,6 +33,12 @@ class FG_eval {
     // `fg` a vector of the cost constraints, `vars` is a vector of variable values (state & actuators)
     // NOTE: You'll probably go back and forth between this function and
     // the Solver function below.
+
+    fg[0] = 0;
+    for (int t = 1; t < N; t++) {
+      
+    }
+
   }
 };
 

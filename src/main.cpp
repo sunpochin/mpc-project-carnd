@@ -100,15 +100,13 @@ int main() {
           */
           Eigen::VectorXd ptsxXd = Eigen::VectorXd::Map(&ptsx[0], ptsx.size());
           Eigen::VectorXd ptsyXd = Eigen::VectorXd::Map(&ptsy[0], ptsy.size());          
-          Eigen::VectorXd fit_curve = polyfit(ptsxXd, ptsyXd, 3);
-          double fit = polyeval(fit_curve, 0);
+          Eigen::VectorXd fit_curve_coeffs = polyfit(ptsxXd, ptsyXd, 3);
+          double cte = polyeval(fit_curve_coeffs, px) - py;
+          double epsi = psi - atan(fit_curve_coeffs[1]);
           Eigen::VectorXd state = Eigen::VectorXd(6);
-
-          double cte = 0;
-          double epsi = 0;
           state << px, py, psi, v, cte, epsi;
 
-          auto answers = mpc.Solve(state, fit_curve);
+          auto answers = mpc.Solve(state, fit_curve_coeffs);
           double steer_value = answers[0];
           double throttle_value = answers[1];
 
@@ -134,6 +132,14 @@ int main() {
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
+          // https://discussions.udacity.com/t/no-trajectory-plotted-in-simulator/373986/3
+          auto vehicle_pts = Eigen::MatrixXd(2, ptsx.size());  
+          for (size_t i = 0; i < ptsx.size() ; ++i) {
+              vehicle_pts(0, i) = (ptsx[i] - px) * cos(psi) + (ptsy[i] - py) * sin(psi);
+              vehicle_pts(1, i) = -(ptsx[i] - px) * sin(psi) + (ptsy[i] - py) * cos(psi);
+              next_x_vals.push_back(vehicle_pts(0,i));
+              next_y_vals.push_back(vehicle_pts(1,i));
+          }
 
           msgJson["next_x"] = next_x_vals;
           msgJson["next_y"] = next_y_vals;
