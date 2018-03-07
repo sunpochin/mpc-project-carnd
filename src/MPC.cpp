@@ -132,14 +132,15 @@ class FG_eval {
       // epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt
       fg[1 + x_start + t] = x1 - (x0 + v0 * CppAD::cos(psi0) * dt);
       fg[1 + y_start + t] = y1 - (y0 + v0 * CppAD::sin(psi0) * dt);
-      fg[1 + psi_start + t] = psi1 - (psi0 + (v0 / Lf) * delta0  * dt);
+      fg[1 + psi_start + t] = psi1 - (psi0 + v0 * delta0 / Lf * dt);
       fg[1 + v_start + t] = v1 - (v0 + a0 * dt);
       fg[1 + cte_start + t] =
           cte1 - ((f0 - y0) + (v0 * CppAD::sin(epsi0) * dt));
       fg[1 + epsi_start + t] =
-          epsi1 - ((psi0 - psides0) + (v0 / Lf) * delta0 * dt);
+          epsi1 - ((psi0 - psides0) + v0 * delta0 / Lf * dt);
+      // fg[1 + epsi_start + t] =
+      //     epsi1 - ((psi0 - psides0) - v0 * delta0 / Lf * dt);
     }
-
   }
 };
 
@@ -150,10 +151,6 @@ MPC::MPC() {}
 MPC::~MPC() {}
 
 vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
-
-  cout << "state: " << state << std::endl;
-  cout << "coeffs: " << coeffs << std::endl;
-
 
   bool ok = true;
   typedef CPPAD_TESTVECTOR(double) Dvector;
@@ -172,6 +169,10 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   size_t n_vars = states_cnt * N + inputs_cnt * (N - 1);
   // TODO: Set the number of constraints
   size_t n_constraints = N * states_cnt;
+
+  cout << "state: " << state << std::endl;
+  cout << "coeffs: " << coeffs << std::endl;
+  cout << "n_constraints: " << n_constraints << std::endl;
 
   // Initial value of the independent variables.
   // SHOULD BE 0 besides initial state.
@@ -278,6 +279,15 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   auto cost = solution.obj_value;
   std::cout << "Cost " << cost << std::endl;
 
+  // use this to return values for the green line prediction.
+  // https://discussions.udacity.com/t/no-trajectory-plotted-in-simulator/373986/3
+  mpc_x_vals = {};
+  mpc_y_vals = {};
+  for (size_t i = 0; i < N - 1; i++) {
+    mpc_x_vals.push_back(solution.x[x_start + i + 1]);
+    mpc_y_vals.push_back(solution.x[y_start + i + 1]);
+  }
+
   // TODO: Return the first actuator values. The variables can be accessed with
   // `solution.x[i]`.
   //
@@ -286,11 +296,6 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   vector<double> result;
   result.push_back(solution.x[delta_start]);
   result.push_back(solution.x[a_start]);
-
-  for (size_t i = 0; i < N-1; i++) {
-    result.push_back(solution.x[x_start + i + 1]);
-    result.push_back(solution.x[y_start + i + 1]);
-  }
 
   return result;
 

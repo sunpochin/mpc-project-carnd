@@ -104,7 +104,7 @@ int main() {
           // should "transform points to car space" !!!
           for (size_t i = 0; i < ptsx.size(); i++) {
             ptsxXd[i] = (ptsx[i] - px) * cos(psi) - (ptsy[i] - py) * sin(psi);
-            ptsxXd[i] = (ptsx[i] - px) * sin(psi) + (ptsy[i] - py) * cos(psi);
+            ptsxXd[i] = -(ptsx[i] - px) * sin(psi) + (ptsy[i] - py) * cos(psi);
           }
           Eigen::VectorXd fit_curve_coeffs = polyfit(ptsxXd, ptsyXd, 3);
           double cte = polyeval(fit_curve_coeffs, px);
@@ -131,17 +131,8 @@ int main() {
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Green line
-          // TODO
-          for (size_t i = 2; i < solution.size(); i++ ) {
-            if (i % 2 == 0) {
-              mpc_x_vals.push_back(solution[i]);
-            } else {
-              mpc_y_vals.push_back(solution[i]);
-            }
-          }
-
-          msgJson["mpc_x"] = mpc_x_vals;
-          msgJson["mpc_y"] = mpc_y_vals;
+          msgJson["mpc_x"] = mpc.mpc_x_vals;
+          msgJson["mpc_y"] = mpc.mpc_y_vals;
 
           //Display the waypoints/reference line
           vector<double> next_x_vals;
@@ -150,7 +141,6 @@ int main() {
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
           // TODO
-
           // The formula illustrated:
           // Q:Do you need to transform coordiantes? https://discussions.udacity.com/t/do-you-need-to-transform-coordiantes/256483/10
           // Related discussions:
