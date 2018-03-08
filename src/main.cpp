@@ -101,7 +101,14 @@ int main() {
           // https://discussions.udacity.com/t/trajectory-seems-off-during-curvy-waypoints/272947          
           Eigen::VectorXd Eigenpts_X = Eigen::VectorXd(6);
           Eigen::VectorXd Eigenpts_Y = Eigen::VectorXd(6);
+          // TODO
           // should "transform points to car space" !!!
+          // The formula illustrated:
+          // Q:Do you need to transform coordiantes? https://discussions.udacity.com/t/do-you-need-to-transform-coordiantes/256483/10
+          // Related discussions:
+          // Q:Unable to understand transforms? https://discussions.udacity.com/t/unable-to-understand-transforms/271023/3
+          // https://discussions.udacity.com/t/no-trajectory-plotted-in-simulator/373986/7
+          // https://discussions.udacity.com/t/lines-not-displaying/395585
           for (size_t i = 0; i < ptsx.size(); i++) {
             Eigenpts_X[i] = (ptsx[i] - px) * cos(psi) + (ptsy[i] - py) * sin(psi);
             Eigenpts_Y[i] = -(ptsx[i] - px) * sin(psi) + (ptsy[i] - py) * cos(psi);
@@ -116,7 +123,7 @@ int main() {
 
           double steer_value;
           double throttle_value;
-          steer_value = solution[0];
+          steer_value = solution[0] * -1;
           throttle_value = solution[1];
 
           json msgJson;
@@ -141,18 +148,9 @@ int main() {
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
           // TODO
-          // The formula illustrated:
-          // Q:Do you need to transform coordiantes? https://discussions.udacity.com/t/do-you-need-to-transform-coordiantes/256483/10
-          // Related discussions:
-          // Q:Unable to understand transforms? https://discussions.udacity.com/t/unable-to-understand-transforms/271023/3
-          // https://discussions.udacity.com/t/no-trajectory-plotted-in-simulator/373986/7
-          // https://discussions.udacity.com/t/lines-not-displaying/395585
-          auto vehicle_pts = Eigen::MatrixXd(2, ptsx.size());  
           for (size_t i = 0; i < ptsx.size() ; ++i) {
-              vehicle_pts(0, i) = (ptsx[i] - px) * cos(psi) + (ptsy[i] - py) * sin(psi);
-              vehicle_pts(1, i) = -(ptsx[i] - px) * sin(psi) + (ptsy[i] - py) * cos(psi);
-              next_x_vals.push_back(vehicle_pts(0,i));
-              next_y_vals.push_back(vehicle_pts(1,i));
+            next_x_vals.push_back(Eigenpts_X(i) );
+            next_y_vals.push_back(Eigenpts_Y(i) );
           }
 
           msgJson["next_x"] = next_x_vals;
