@@ -1,23 +1,25 @@
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
 
-## Overview 
+# Overview
 Model Predictive Control
 
-## Result video
+# Result video
 ---
 https://youtu.be/vuNA2bOWKP0
 
-## Rubric Points
----
-### Compilation
-#### Your code should compile.
+# Rubric Points
+
+## Compilation
+
+### Your code should compile.
 > Code must compile without errors with cmake and make.
 
-It compiles on my ubuntu 16.04 laptop without warning and error. 
+It compiles on my ubuntu 16.04 laptop without warning and error.
 
-### Implementation
-#### The Model
+## Implementation
+
+### The Model
 > Student describes their model in detail. This includes the state, actuators and update equations.
 
 This project uses a Kinematic model, which is a simplification of dynamic model that ignore tire forces, gravity, and mass.
@@ -70,4 +72,3 @@ Cross Track Error (cte) and Psi Error (eψ) are used to build the cost function 
 
 ## Installation (copied from original)
 Installation instruction from Udacity repository: [link](https://github.com/udacity/CarND-MPC-Project/blob/master/README.md)
-
