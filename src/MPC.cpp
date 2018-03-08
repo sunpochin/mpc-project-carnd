@@ -15,6 +15,8 @@ using CppAD::AD;
 // TODO: Set the timestep length and duration
 size_t N = 10;
 double dt = 0.1;
+// reference speed, the fastest speed we wish the car able to achieve.
+double ref_v = 40;
 
 // https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/338b458f-7ebf-449c-9ad1-611eb933b076/concepts/ee21948d-7fad-4821-b61c-0d69bbfcc425
 // Defining the index used to form the array "vars"
@@ -31,7 +33,6 @@ size_t a_start = delta_start + N - 1;
 // the count of states and inputs addressed above.
 size_t states_cnt = 6;
 size_t inputs_cnt = 2;
-double ref_v = 40;
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -64,11 +65,12 @@ class FG_eval {
     // tuning technique: https://discussions.udacity.com/t/mpc-cost-paramter-tuning-question/354670/2?u=sun.pochin
     // The part of the cost based on the reference state.
     for (size_t t = 0; t < N; t++) {
+      // remains 1 meaning: "we are super sensitive to cte, better try to make it as small as possible."
       fg[0] += 1 * CppAD::pow(vars[cte_start + t], 2);
-      // remains 1 meaning: "we are super sensitive to espi, better correct it soon".
+      // remains 1 meaning: "we are super sensitive to espi too, better try to make it as small as possible."
       fg[0] += 1 * CppAD::pow(vars[epsi_start + t], 2);
-      // change from 1 to 10, meaning: "you don't have to drive fast all the time"
-      fg[0] += 10 * CppAD::pow(vars[v_start + t] - ref_v, 2);
+      // 
+      fg[0] += 1 * CppAD::pow(vars[v_start + t] - ref_v, 2);
     }
 
     // Minimize the use of actuators.
@@ -76,7 +78,8 @@ class FG_eval {
       // 1000 meaning: "please turn the steer very carefully."
       fg[0] += 1000 * CppAD::pow(vars[delta_start + t], 2);
       fg[0] += 1 * CppAD::pow(vars[a_start + t], 2);
-      // // https://discussions.udacity.com/t/mpc-cost-paramter-tuning-question/354670/5
+      // https://discussions.udacity.com/t/mpc-cost-paramter-tuning-question/354670/5
+      // maybe I'll have to use this if I want to try higher ref_v .
       // fg[0] += 1000 * CppAD::pow(vars[delta_start + t] * vars[v_start + t], 2);
     }
 
