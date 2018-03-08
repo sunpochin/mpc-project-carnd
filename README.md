@@ -5,7 +5,6 @@ Self-Driving Car Engineer Nanodegree Program
 Model Predictive Control
 
 # Result video
----
 https://youtu.be/vuNA2bOWKP0
 
 # Rubric Points
@@ -17,9 +16,9 @@ https://youtu.be/vuNA2bOWKP0
 
 It compiles on my ubuntu 16.04 laptop without warning and error.
 
-## Implementation
+### Implementation
 
-### The Model
+#### The Model
 > Student describes their model in detail. This includes the state, actuators and update equations.
 
 This project uses a Kinematic model, which is a simplification of dynamic model that ignore tire forces, gravity, and mass.
