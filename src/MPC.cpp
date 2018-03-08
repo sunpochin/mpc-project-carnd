@@ -13,8 +13,8 @@ using CppAD::AD;
 
 
 // TODO: Set the timestep length and duration
-size_t N = 10;
-double dt = 0.1;
+size_t N = 12;
+double dt = 0.12;
 
 // https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/338b458f-7ebf-449c-9ad1-611eb933b076/concepts/ee21948d-7fad-4821-b61c-0d69bbfcc425
 // Defining the index used to form the array "vars"
