@@ -46,7 +46,7 @@ Cross Track Error (cte) and Psi Error (eψ) are used to build the cost function 
 * Timestep Length: N = 10
 * Elapsed Duration: dt = 0.1
 
-  The prediction horizon T is the duration over which future predictions are made, which is the product of two other variables, N and dt. I started with N = 50 and dt = 0.1 to predict 5 seconds but it doesn't produce a good green line prediction, so I keep tuning N until it looks OK.
+  The prediction horizon T is the duration over which future predictions are made, which is the product of two other variables, N and dt. I started with N = 50 and dt = 0.1 to predict 5 seconds but it doesn't produce a good green line prediction, so I keep tuning down N to 10 and the green line looks reasonable.
 
 
 ### Polynomial Fitting and MPC Preprocessing

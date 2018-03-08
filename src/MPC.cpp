@@ -176,9 +176,9 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // TODO: Set the number of constraints
   size_t n_constraints = N * states_cnt;
 
-  cout << "state: " << state << std::endl;
-  cout << "coeffs: " << coeffs << std::endl;
-  cout << "n_constraints: " << n_constraints << std::endl;
+  // cout << "state: " << state << std::endl;
+  // cout << "coeffs: " << coeffs << std::endl;
+  // cout << "n_constraints: " << n_constraints << std::endl;
 
   // Initial value of the independent variables.
   // SHOULD BE 0 besides initial state.
