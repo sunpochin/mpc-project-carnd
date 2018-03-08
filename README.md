@@ -4,7 +4,9 @@ Self-Driving Car Engineer Nanodegree Program
 ## Overview 
 Model Predictive Control
 
+## Result video
 ---
+https://youtu.be/vuNA2bOWKP0
 
 ## Rubric Points
 ---
@@ -13,13 +15,35 @@ Model Predictive Control
 #### Your code should compile.
 > Code must compile without errors with cmake and make.
 
-> Given that we've made CMakeLists.txt as general as possible, it's recommend that you do not change it unless you can guarantee that your changes will still compile on any platform.
+It compiles on my ubuntu 16.04 laptop without warning and error. 
 
 ---
 ### Implementation
 ---
 #### The Model
 > Student describes their model in detail. This includes the state, actuators and update equations.
+
+This project uses a Kinematic model, which is a simplification of dynamic model that ignore tire forces, gravity, and mass.
+
+The model consists 4 States, 2 Control Inputs, and 2 Errors.
+
+##### States:
+* x and y are the coordinates of the vehicle. <br>
+* ψ is the orientation of the vehicle. <br>
+* v is the velocity of the vehicle. <br>
+
+##### Control Inputs:
+The states of the next time step can be calculated at the next time step with the following equations:
+* x(t+dt) = x(t) + v(t) ∗ cos(ψ(t)) ∗ dt
+* y(t+dt) = y(t) + v(t) ∗ sin(ψ(t)) ∗ dt
+* ψ(t+dt) = ψ(t) + (v(t)/Lf) ∗ δ(t) ∗ dt
+* v(t+dt) = v(t) + a(t) ∗ dt
+
+##### Errors and Cost Function:
+Cross Track Error (cte) and Psi Error (eψ) are used to build the cost function of the model. They are calculated at the next time step with the following equations:
+* cte(t+dt) = cte(t) + v(t) ∗ sin(eψ(t)) * dt
+* eψ(t+dt) = eψ(t) + (v(t)/Lf) ∗ δ(t) ∗ dt
+
 
 #### Timestep Length and Elapsed Duration (N & dt)
 > Student discusses the reasoning behind the chosen N (timestep length) and dt (elapsed duration between timesteps) values. Additionally the student details the previous values tried.
