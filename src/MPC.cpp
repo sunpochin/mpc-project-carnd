@@ -31,7 +31,7 @@ size_t a_start = delta_start + N - 1;
 // the count of states and inputs addressed above.
 size_t states_cnt = 6;
 size_t inputs_cnt = 2;
-double ref_v = 40;
+double ref_v = 80;
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -63,8 +63,8 @@ class FG_eval {
 
     // The part of the cost based on the reference state.
     for (size_t t = 0; t < N; t++) {
-      fg[0] += 2000 * CppAD::pow(vars[cte_start + t], 2);
-      fg[0] += 2000 * CppAD::pow(vars[epsi_start + t], 2);
+      fg[0] += 1000 * CppAD::pow(vars[cte_start + t], 2);
+      fg[0] += 1000 * CppAD::pow(vars[epsi_start + t], 2);
       fg[0] += CppAD::pow(vars[v_start + t] - ref_v, 2);
     }
 
@@ -73,13 +73,13 @@ class FG_eval {
       fg[0] += 10 * CppAD::pow(vars[delta_start + t], 2);
       fg[0] += 10 * CppAD::pow(vars[a_start + t], 2);
       // https://discussions.udacity.com/t/mpc-cost-paramter-tuning-question/354670/5
-      fg[0] += 500 * CppAD::pow(vars[delta_start + t] * vars[v_start + t], 2);
+      fg[0] += 1000 * CppAD::pow(vars[delta_start + t] * vars[v_start + t], 2);
     }
 
     // Minimize the value gap between sequential actuations.
     for (size_t t = 0; t < N - 2; t++) {
-      fg[0] += 100 * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
-      fg[0] += 10 * CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
+      fg[0] += 1000 * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
+      fg[0] += 1000 * CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
     }
 
     // Initial constraints
