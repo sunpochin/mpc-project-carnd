@@ -23,11 +23,14 @@ This project uses a Kinematic model, which is a simplification of dynamic model 
 The model consists 4 States, 2 Control Inputs, and 2 Errors.
 
 #### States:
-* x and y are the coordinates of the vehicle. <br>
-* ψ is the orientation of the vehicle. <br>
-* v is the velocity of the vehicle. <br>
+* x and y: the coordinates of the vehicle. <br>
+* ψ: the orientation of the vehicle. <br>
+* v: is the velocity of the vehicle. <br>
 
 #### Control Inputs:
+* δ: the steering angle.
+* a: the change of speed, positive for acceleration, negative for braking.
+
 The states of the next time step can be calculated at the next time step with the following equations:
 * x(t+dt) = x(t) + v(t) ∗ cos(ψ(t)) ∗ dt
 * y(t+dt) = y(t) + v(t) ∗ sin(ψ(t)) ∗ dt
@@ -68,6 +71,27 @@ double epsi = -atan(fit_curve_coeffs[1]);
 ### Model Predictive Control with Latency
 > The student implements Model Predictive Control that handles a 100 millisecond latency. Student provides details on how they deal with latency.
 
+The coordinates are already transform to the car coordinate system, so x, y, psi before latency would be 0, and the states after latency incorporated is computed using previous states and 2 Control Inputs:
+
+```cpp
+// dealing with latency:
+const double Lf = 2.67;
+double delta_angle = j[1]["steering_angle"];
+delta_angle = delta_angle * (-1.0);
+double acceleration = j[1]["throttle"];
+// predict state in 100ms
+double latency = 0.1;
+double l_x = 0 + v * cos(0) * latency;
+double l_y = 0 + v * sin(0) * latency;
+double l_psi = 0 + v * delta_angle / Lf * latency;
+double l_v = v + acceleration * latency;
+double cte = polyeval(fit_curve_coeffs, px);
+double epsi = -atan(fit_curve_coeffs[1]);
+double l_cte = cte + v * sin(epsi) * latency;
+double l_epsi = epsi + v * delta_angle / Lf * latency;
+state << l_x, l_y, l_psi, l_v, l_cte, l_epsi;
+auto solution = mpc.Solve(state, fit_curve_coeffs);
+```
 
 
 ## Simulation
@@ -77,8 +101,7 @@ double epsi = -atan(fit_curve_coeffs[1]);
 
 > The car can't go over the curb, but, driving on the lines before the curb is ok.
 
-Result video youtube: [link](https://youtu.be/vuNA2bOWKP0)
-
+Result video youtube: [link](https://youtu.be/3Oi2jr_bZ_k)
 
 ## Installation
 Installation instruction from Udacity repository: [link](https://github.com/udacity/CarND-MPC-Project/blob/master/README.md)

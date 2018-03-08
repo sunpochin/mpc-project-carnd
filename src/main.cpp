@@ -118,22 +118,21 @@ int main() {
           Eigen::VectorXd state = Eigen::VectorXd(6);
 
           // dealing with latency: 
-          // https://discussions.udacity.com/t/how-to-incorporate-latency-into-the-model/257391/4
+          // https://discussions.udacity.com/t/how-to-incorporate-latency-into-the-model/257391/64?u=sun.pochin
           const double Lf = 2.67;
-          double delta = j[1]["steering_angle"];
-          delta = delta * (-1.0);
+          double delta_angle = j[1]["steering_angle"];
+          delta_angle = delta_angle * (-1.0);
           double acceleration = j[1]["throttle"];
           // predict state in 100ms
           double latency = 0.1; 
           double l_x = 0 + v * cos(0) * latency;
           double l_y = 0 + v * sin(0) * latency;
-          double l_psi = 0 + v * delta / Lf * latency;
+          double l_psi = 0 + v * delta_angle / Lf * latency;
           double l_v = v + acceleration * latency; 
-
           double cte = polyeval(fit_curve_coeffs, px);
           double epsi = -atan(fit_curve_coeffs[1]);
           double l_cte = cte + v * sin(epsi) * latency;
-          double l_epsi = epsi + v * delta / Lf * latency;
+          double l_epsi = epsi + v * delta_angle / Lf * latency;
           // state << 0, 0, 0, v, cte, epsi;
           // cout << " state : " << state << std::endl;
           state << l_x, l_y, l_psi, l_v, l_cte, l_epsi;
