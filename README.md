@@ -11,15 +11,12 @@ https://youtu.be/vuNA2bOWKP0
 ## Rubric Points
 ---
 ### Compilation
----
 #### Your code should compile.
 > Code must compile without errors with cmake and make.
 
 It compiles on my ubuntu 16.04 laptop without warning and error. 
 
----
 ### Implementation
----
 #### The Model
 > Student describes their model in detail. This includes the state, actuators and update equations.
 
