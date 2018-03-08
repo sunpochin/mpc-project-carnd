@@ -2,7 +2,7 @@
 Self-Driving Car Engineer Nanodegree Program
 
 # Overview
-Model Predictive Control
+This project implements a Model Predictive Controller in the simulator to drive a car with telemetry information.
 
 # Rubric Points
 
